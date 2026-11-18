@@ -1,0 +1,21 @@
+[project]
+name = "youtube-intelligence-platform"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "'app5-dev'", email = "339750546+app5-dev@users.noreply.github.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "python-dotenv>=1.2.4",
+    "pyyaml>=6.0.3",
+    "requests>=2.34.2",
+]
+
+[project.scripts]
+youtube-intelligence-platform = "youtube_intelligence_platform:main"
+
+[build-system]
+requires = ["uv_build>=0.12.13,<0.13.0"]
+build-backend = "uv_build"
