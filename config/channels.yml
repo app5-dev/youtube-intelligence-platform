@@ -1,9 +1,12 @@
 channels:
   - handle: "@GoogleDevelopers"
-    category: "technology"
+    category: technology
+    enabled: true
 
   - handle: "@TED"
-    category: "education"
+    category: education
+    enabled: true
 
   - handle: "@NASA"
-    category: "science"
+    category: science
+    enabled: true
