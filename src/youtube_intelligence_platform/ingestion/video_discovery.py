@@ -11,9 +11,11 @@ class VideoDiscovery:
         self,
         client,
         checkpoint_dir="data/checkpoints",
+        registry=None,
     ):
         self.client = client
         self.checkpoint_dir = Path(checkpoint_dir)
+        self.registry = registry
 
     def discover(self, channel_handle, max_pages=2):
         if max_pages < 1:
@@ -35,9 +37,10 @@ class VideoDiscovery:
             checkpoint_path, channel_id
         )
 
-        known_ids = set(
-            checkpoint["processed_video_ids"]
-        )
+        if self.registry is not None:
+            known_ids = self.registry.get_ingested_ids(channel_id)
+        else:
+            known_ids = set(checkpoint["processed_video_ids"])
 
         discovered_ids = []
         seen = set()
