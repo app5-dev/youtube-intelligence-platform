@@ -6,6 +6,10 @@ import os
 import requests
 from dotenv import load_dotenv
 
+import logging
+
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 BASE_URL = "https://www.googleapis.com/youtube/v3"
 
@@ -20,6 +24,22 @@ class YouTubeClient:
             raise ValueError("Missing YOUTUBE_API_KEY")
 
         self.session = requests.Session()
+
+        retry_policy = Retry(
+            total=4,
+            connect=4,
+            read=2,
+            backoff_factor=2,
+            status_forcelist=[429, 500, 502, 503, 504],
+            allowed_methods=["GET"],
+            respect_retry_after_header=True,
+        )
+
+        adapter = HTTPAdapter(max_retries=retry_policy)
+
+        self.session.mount("https://", adapter)
+        self.session.mount("http://", adapter)
+
 
     def get_json(self, endpoint, params):
         response = self.session.get(

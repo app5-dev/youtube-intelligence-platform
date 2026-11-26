@@ -11,14 +11,11 @@ class DailyDiscovery:
         queue,
         discovery_state,
         registry=None,
+        checkpoint_dir="data/checkpoints",
     ):
         self.discovery = VideoDiscovery(
             client=client,
-            checkpoint_dir=(
-                registry.checkpoint_dir
-                if registry is not None
-                else "data/checkpoints"
-            ),
+            checkpoint_dir=checkpoint_dir,
             registry=registry,
         )
 
@@ -26,7 +23,7 @@ class DailyDiscovery:
         self.discovery_state = discovery_state
 
     def run(self, channel_handle, max_pages=2):
-        # Step 1: Discover video IDs
+        # 1. Discover video IDs.
         result = self.discovery.discover(
             channel_handle=channel_handle,
             max_pages=max_pages,
@@ -34,15 +31,16 @@ class DailyDiscovery:
 
         channel_id = result["channel_id"]
 
-        # Step 2: Persist pending video IDs
+        # 2. Persist missing IDs before marking scan successful.
         added = self.queue.enqueue(
             channel_id,
             result["new_video_ids"],
         )
 
-        # Step 3: Save discovery state only after queuing
+        # 3. Save discovery metadata.
         state_path = self.discovery_state.save(result)
 
+        # 4. Count pending tasks.
         pending_count = len(
             self.queue.load(channel_id)["pending_video_ids"]
         )
